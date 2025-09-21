@@ -82,6 +82,19 @@ public class TaskControllerTest {
     }
 
     @Test
+    public void testCreateTaskBadField() throws Exception {
+        Task newTask = new Task();
+        Mockito.when(taskService.createNewTask(any(Task.class))).thenReturn(newTask);
+
+        mockMvc.perform(post("/api/v1/tasks/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\"completed\":  false}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors[0].message").value("Task description is required."));
+
+    }
+
+    @Test
     public void testUpdateTask() throws Exception {
         Task updatedTask = new Task("Updated Task", true);
         Mockito.when(taskService.updateTask(any(Task.class))).thenReturn(updatedTask);

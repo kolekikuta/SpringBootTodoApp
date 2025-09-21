@@ -1,5 +1,6 @@
 package org.example.springboottodoapp.controllers;
 
+import jakarta.validation.Valid;
 import org.example.springboottodoapp.models.Task;
 import org.example.springboottodoapp.services.TaskService;
 import org.example.springboottodoapp.repositories.TaskRepository;
@@ -34,7 +35,7 @@ public class TaskController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Task> createTask(@RequestBody Task task) {
+    public ResponseEntity<Task> createTask(@Valid @RequestBody Task task) {
         Task savedTask = taskService.createNewTask(task);
         URI location = URI.create("/api/v1/tasks/" + savedTask.getId());
         return ResponseEntity

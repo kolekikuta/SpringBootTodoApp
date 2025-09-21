@@ -1,10 +1,8 @@
 package org.example.springboottodoapp.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import jakarta.persistence.Id;
 import lombok.NoArgsConstructor;
@@ -17,8 +15,12 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "Task description is required.")
     private String task;
-    private boolean completed;
+
+    // False by default if not provided
+    private boolean completed = false;
 
     public Task(String task, boolean completed) {
         this.task = task;
