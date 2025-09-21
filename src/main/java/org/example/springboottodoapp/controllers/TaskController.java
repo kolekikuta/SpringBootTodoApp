@@ -34,6 +34,11 @@ public class TaskController {
         return ResponseEntity.ok(taskService.findAllInCompleteTask());
     }
 
+    @GetMapping("/overdue")
+    public ResponseEntity<List<Task>> getAllOverdueTasks() {
+        return ResponseEntity.ok(taskService.findAllOverdueTask());
+    }
+
     @PostMapping("/")
     public ResponseEntity<Task> createTask(@Valid @RequestBody Task task) {
         Task savedTask = taskService.createNewTask(task);

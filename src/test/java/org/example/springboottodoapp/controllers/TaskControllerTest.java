@@ -1,20 +1,19 @@
-package org.example.springboottodoapp;
+package org.example.springboottodoapp.controllers;
 
-import org.example.springboottodoapp.controllers.TaskController;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.springboottodoapp.TestConfig;
 import org.example.springboottodoapp.models.Task;
 import org.example.springboottodoapp.services.TaskService;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.http.MediaType;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,6 +31,9 @@ public class TaskControllerTest {
 
     @MockBean
     private TaskService taskService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     public void testGetAllTasks() throws Exception {
@@ -69,8 +71,31 @@ public class TaskControllerTest {
     }
 
     @Test
+    public void testGetAllOverdueTasks() throws Exception {
+       LocalDateTime now = LocalDateTime.now();
+       Task task1 = new Task("Task 1", false, now.minusDays(1));
+       Task task2 = new Task("Task 2", false, now.minusDays(2));
+       Task task3 = new Task("Task 3", false, now.plusDays(3));
+
+       List<Task> overdueTasks = Arrays.asList(task1, task2);
+
+       Mockito.when(taskService.findAllOverdueTask())
+               .thenReturn(overdueTasks);
+
+       mockMvc.perform(get("/api/v1/tasks/overdue"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.length()").value(2))
+               .andExpect(jsonPath("$[0].task").value("Task 1"))
+               .andExpect(jsonPath("$[1].task").value("Task 2"));
+    }
+
+    @Test
     public void testCreateTask() throws Exception {
+        LocalDateTime now = LocalDateTime.of(2025, 9, 20, 12, 0, 0);
+
         Task newTask = new Task("New Task", false);
+        newTask.setCreatedAt(now);
+
         Mockito.when(taskService.createNewTask(any(Task.class))).thenReturn(newTask);
 
         mockMvc.perform(post("/api/v1/tasks/")
@@ -78,7 +103,8 @@ public class TaskControllerTest {
                     .content("{\"task\":  \"New Task\", \"completed\":  false}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.task").value("New Task"))
-                .andExpect(jsonPath("$.completed").value(false));
+                .andExpect(jsonPath("$.completed").value(false))
+                .andExpect(jsonPath("$.createdAt").value("2025-09-20T12:00:00"));
     }
 
     @Test
@@ -92,6 +118,17 @@ public class TaskControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors[0].message").value("Task description is required."));
 
+    }
+
+    @Test
+    public void testCreateTaskBadDueDate() throws Exception {
+        Task invalidTask = new Task("Bad Task", false, LocalDateTime.now().minusDays(1));
+
+        mockMvc.perform(post("/api/v1/tasks/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(invalidTask)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors[0].message").value("Due date must be after created date."));
     }
 
     @Test
@@ -109,7 +146,7 @@ public class TaskControllerTest {
 
     @Test
     public void testDeleteTask() throws Exception {
-        Task task = new Task(1L, "Task 1", false);
+        Task task = new Task("Task 1", false);
         Mockito.when(taskService.findTaskById(1L)).thenReturn(task);
         Mockito.doNothing().when(taskService).deleteTask(task);
 

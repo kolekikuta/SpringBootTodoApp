@@ -5,7 +5,7 @@ A simple Todo List REST API built to learn Spring Boot and MySQL.
 ## 🚀 Features
 - CRUD operations on Tasks
   - Create new tasks
-  - Get all tasks / completed / incomplete
+  - Get all tasks / completed / incomplete / overdue
   - Update tasks
   - Delete tasks
 - REST endpoints with proper HTTP status codes (201 for create, 204 or 200 for delete/update, etc.)
@@ -20,6 +20,7 @@ A simple Todo List REST API built to learn Spring Boot and MySQL.
 - MySQL (as the database)
 - Lombok
 - Maven
+- Jacoco
 
 ## ⚙️ Setup & Installation
 
@@ -61,14 +62,18 @@ The app will start on http://localhost:8080/.
 | DELETE | /api/v1/tasks/{id}       | Delete a task by ID                  | None            | 204 No Content or 404 Not Found |
 
 ## 🧪 Testing
-
 - Uses Spring’s testing framework and Mockito.
 - Controller tests mock out the service layer.
 - Tests check behavior of each endpoint (create, update, get, delete), including error scenarios.
+- Uses Jacoco to verify test coverage, 100% coverage of the controllers and models
 
 To run tests:
 ```bash
 mvn test
+```
+For test coverage:
+```bash
+mvn clean verify
 ```
 ## ❓ Error Handling
 - If you try to update or delete a task that doesn’t exist, the service will throw a TaskNotFoundException, which is translated to a 404 Not Found HTTP response.

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.example.springboottodoapp.exceptions.TaskNotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -35,6 +36,10 @@ public class TaskService {
 
     public List<Task> findAllInCompleteTask() {
         return taskRepository.findByCompletedFalse();
+    }
+
+    public List<Task> findAllOverdueTask() {
+        return taskRepository.findByDueDateBeforeAndCompletedFalse(LocalDateTime.now());
     }
 
     public void deleteTask(Task task) {
