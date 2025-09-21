@@ -74,11 +74,11 @@ mvn test
 - If you try to update or delete a task that doesn’t exist, the service will throw a TaskNotFoundException, which is translated to a 404 Not Found HTTP response.
 
 ## 👍 Improvements & TODOs
-- [] Add user authentication / authorization
-- [] Input validation (e.g. checking required fields)
-- [] Paging and sorting for large lists of tasks
-- [] Better error messages / response bodies with error codes
-- [] Add integration tests (with an in-memory database)
+- [ ] Add user authentication / authorization
+- [ ] Input validation (e.g. checking required fields)
+- [ ] Paging and sorting for large lists of tasks
+- [ ] Better error messages / response bodies with error codes
+- [ ] Add integration tests (with an in-memory database)
 
 ## 👤 Author
 Kole Kikuta
