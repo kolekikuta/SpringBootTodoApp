@@ -10,7 +10,7 @@ A simple Todo List REST API built to learn Spring Boot and MySQL.
   - Delete tasks
 - REST endpoints with proper HTTP status codes (201 for create, 204 or 200 for delete/update, etc.)
 - Use of Spring Data JPA for persistence
-- Exception handling for cases when tasks are not found
+- Exception handling for cases when tasks are not found/input validation
 - Uses Lombok to reduce boilerplate in model and service classes (getters/setters, constructors)
 
 ## 🛠️ Technologies
@@ -75,7 +75,6 @@ mvn test
 
 ## 👍 Improvements & TODOs
 - [ ] Add user authentication / authorization
-- [ ] Input validation (e.g. checking required fields)
 - [ ] Paging and sorting for large lists of tasks
 - [ ] Better error messages / response bodies with error codes
 - [ ] Add integration tests (with an in-memory database)
