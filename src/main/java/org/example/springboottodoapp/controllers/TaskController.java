@@ -1,6 +1,9 @@
 package org.example.springboottodoapp.controllers;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.example.springboottodoapp.dto.TaskResponseDTO;
+import org.example.springboottodoapp.mapper.TaskMapper;
 import org.example.springboottodoapp.models.Task;
 import org.example.springboottodoapp.services.TaskService;
 import org.example.springboottodoapp.repositories.TaskRepository;
@@ -14,14 +17,20 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/api/v1/tasks")
+@RequiredArgsConstructor
 public class TaskController {
 
     @Autowired
     private TaskService taskService;
+    private final TaskMapper taskMapper;
+
 
     @GetMapping("/")
-    public ResponseEntity<List<Task>> getAllTasks() {
-        return ResponseEntity.ok(taskService.getAllTask());
+    public ResponseEntity<List<TaskResponseDTO>> getAllTasks() {
+        return ResponseEntity.ok(taskService.getAllTask()
+                .stream()
+                .map(taskMapper::toResponseDto)
+                .toList());
     }
 
     @GetMapping("/completed")
